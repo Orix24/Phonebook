@@ -4,7 +4,6 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.time.LocalTime;
 
 public class MenuBar {
 
@@ -147,6 +146,7 @@ public class MenuBar {
             for (int j = i; j < phoneBook.contacts.size(); j++) {
                 if (phoneBook.contacts.get(j).getName().equals(name) && phoneBook.contacts.get(j).getPhone().equals(phone) && i != j) {
                     phoneBook.contacts.remove(j);
+                    j--;
                 } else {
                     System.out.println("There is no contact named like this is the phoneBook");
                 }
