@@ -1,7 +1,5 @@
 package phonebook;
 
-import java.util.Scanner;
-
 public class Person {
     private String name;
     private String phone;
