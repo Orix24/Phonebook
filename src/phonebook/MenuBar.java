@@ -7,34 +7,26 @@ import java.util.*;
 
 public class MenuBar {
 
-    private final PhoneBook phoneBook = new PhoneBook();
+    public ArrayList<Person> contacts = new ArrayList<>();
+
 
     /**
      * Create new Person and added it to the phoneBook.
      */
     public void addContact() {
+        Person p = new Person();
         Scanner s = new Scanner(System.in);
         System.out.println("Please enter your name");
         String name = s.nextLine().toLowerCase();
-        String[] isNameMatch = validator(name, "^\\w+$", "Please pay attention max length is 20 characters!\n Please try again, enter a valid name", "The process was closed after 3 wrong attempts");
-        if (isNameMatch[0].equals("true".toLowerCase())) {
-            System.out.println("Please enter your phone");
-            String phone = s.nextLine();
-            String[] isPhoneMatch = validator(phone, "^0\\d([\\d]{0,1})([-]{0,1})\\d{7}$", "Invalid number! May contain only digits and '-'. \n for example : 052-1111111 \n Please try again to enter a valid phone", "The process was closed after 3 wrong attempts");
-            if (isPhoneMatch[0].equals("true".toLowerCase())) {
-                Person p = new Person(name, phone);
-                phoneBook.contacts.add(p);
-                System.out.println("The contact has added to the phoneBook");
-            } else {
-                System.out.println(isPhoneMatch[2]);
-                System.exit(0);
-            }
-        } else {
-            System.out.println(isNameMatch[2]);
-            System.exit(0);
-        }
+        p.setName(name);
+        System.out.println("Please enter your phone");
+        String phone = s.nextLine();
+        p.setPhone(phone);
+        contacts.add(p);
+        System.out.println("The contact has added to the phoneBook");
+
         System.out.println("Please click enter to go back to menu");
-        s.nextLine();
+        scanner();
     }
 
     /**
@@ -42,30 +34,31 @@ public class MenuBar {
      * will be deleted else the user will receive message.
      */
     public void deleteContact() {
+        Person p = new Person();
         Scanner s = new Scanner(System.in);
         System.out.println("Please enter name of the contact to be deleted:");
-        String name = s.nextLine();
-        int size = phoneBook.contacts.size();
-        String[] isNameMatch = validator(name, "^\\w+$", "Please pay attention the name may contain characters and numbers max length is 20!\n Please try again, enter a valid name", "The process was closed after 3 wrong attempts");
-        for (Person person : phoneBook.contacts) {
-            if (person.getName().equals(isNameMatch[1])) {
-                phoneBook.contacts.remove(person);
+        String name = s.nextLine().toLowerCase();
+        p.setName(name);
+        int size = contacts.size();
+        for (Person person : contacts) {
+            if (person.getName().equals(name)) {
+                contacts.remove(person);
                 System.out.println("The contact has been deleted from the phoneBook");
                 break;
             }
         }
-        if (phoneBook.contacts.size() == size) {
+        if (contacts.size() == size) {
             System.out.println("Sorry, name not found in the phoneBook");
         }
         System.out.println("Please click enter to proceed");
-        s.nextLine();
+        scanner();
     }
 
     /**
      * The function run on the arrayList with for each loop and print to the console all the Persons.
      */
     public void showInfo() {
-        for (Person person : phoneBook.contacts) {
+        for (Person person : contacts) {
             System.out.printf("The name is : %s and the phone is : %s%n", person.getName(), person.getPhone());
         }
         System.out.println("Please click enter to proceed");
@@ -77,18 +70,16 @@ public class MenuBar {
      * if the name the user entered found on the arrayList if it is the function will pint the details.
      */
     public void findByName() {
+        Person p = new Person();
         Scanner s = new Scanner(System.in);
         System.out.println("Enter name of the contact to view");
         String name = s.nextLine();
-        String[] isNameMatch = validator(name, "^\\w+$", "Please pay attention the name may contain characters and numbers max length is 20!\n Please try again, enter a valid name", "The process was closed after 3 wrong attempts");
+        p.setName(name);
         boolean isFound = false;
-        for (Person person : phoneBook.contacts) {
-            if (person.getName().equals(isNameMatch[1])) {
+        for (Person person : contacts) {
+            if (person.getName().equals(name)) {
                 System.out.printf("%s %s", "\n" + person.getName(), person.getPhone());
                 isFound = true;
-            } else {
-                System.out.println(isNameMatch[2]);
-                System.exit(0);
             }
         }
         if (!isFound) {
@@ -102,8 +93,8 @@ public class MenuBar {
      * The function run Comparator and sort the arrayList by name.
      */
     public void sortByName() {
-        phoneBook.contacts.sort(Comparator.comparing(Person::getName));
-        for (Person person : phoneBook.contacts) {
+        contacts.sort(Comparator.comparing(Person::getName));
+        for (Person person : contacts) {
             System.out.println(person.getName() + " " + person.getPhone());
         }
         System.out.println("Please click enter to proceed");
@@ -114,8 +105,8 @@ public class MenuBar {
      * The function run Comparator and sort the arrayList by phone.
      */
     public void sortByPhone() {
-        phoneBook.contacts.sort(Comparator.comparing(Person::getPhone));
-        for (Person person : phoneBook.contacts) {
+        contacts.sort(Comparator.comparing(Person::getPhone));
+        for (Person person : contacts) {
             System.out.println(person.getName() + "  " + person.getPhone());
         }
         System.out.println("Please click enter to proceed");
@@ -127,10 +118,10 @@ public class MenuBar {
      */
     public void reverse() {
         System.out.println("Before sorting :");
-        phoneBook.contacts.forEach(System.out::println);
-        Collections.reverse(phoneBook.contacts);
+        contacts.forEach(System.out::println);
+        Collections.reverse(contacts);
         System.out.println("After sorting : ");
-        phoneBook.contacts.forEach(System.out::println);
+        contacts.forEach(System.out::println);
         System.out.println("Please click enter to proceed");
         scanner();
     }
@@ -140,12 +131,12 @@ public class MenuBar {
      * else the user will receive message.
      */
     public void deleteDuplicate() {
-        for (int i = 0; i < phoneBook.contacts.size(); i++) {
-            String name = phoneBook.contacts.get(i).getName();
-            String phone = phoneBook.contacts.get(i).getPhone();
-            for (int j = i; j < phoneBook.contacts.size(); j++) {
-                if (phoneBook.contacts.get(j).getName().equals(name) && phoneBook.contacts.get(j).getPhone().equals(phone) && i != j) {
-                    phoneBook.contacts.remove(j);
+        for (int i = 0; i < contacts.size(); i++) {
+            String name = contacts.get(i).getName();
+            String phone = contacts.get(i).getPhone();
+            for (int j = i; j < contacts.size(); j++) {
+                if (contacts.get(j).getName().equals(name) && contacts.get(j).getPhone().equals(phone) && i != j) {
+                    contacts.remove(j);
                     j--;
                 } else {
                     System.out.println("There is no contact named like this is the phoneBook");
@@ -165,7 +156,7 @@ public class MenuBar {
         String formattedDate = myDateObj.format(myFormatObj);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("Contacts " + formattedDate + ".txt"));
-            for (Person person : phoneBook.contacts) {
+            for (Person person : contacts) {
                 writer.write(person.getName() + ":" + person.getPhone() + "\n");
             }
             writer.close();
@@ -188,27 +179,27 @@ public class MenuBar {
             List<String> collect = reader.lines().toList();
             if (collect.size() > 0) {
                 for (String string : collect) {
-                String[] split = string.split(":");
-                String[] isNameMatch = validator(split[0], "^\\w+$", "Please pay attention max length is 20 characters!\n Please try again, enter a valid name", "The process was closed after 3 wrong attempts");
-                if (isNameMatch[0].equals("true".toLowerCase())) {
-                    String[] isPhoneMatch = validator(split[1], "^0\\d([\\d]{0,1})([-]{0,1})\\d{7}$", "Invalid number! May contain only digits and '-'. \n for example : 052-1111111 \n Please try again to enter a valid phone", "The process was closed after 3 wrong attempts");
-                    if (isPhoneMatch[0].equals("true".toLowerCase())) {
-                        phoneBook.contacts.add(new Person(split[0], split[1]));
+                    String[] split = string.split(":");
+                    String[] isNameMatch = validator(split[0], "^\\w+$", "Please pay attention max length is 20 characters!\n Please try again, enter a valid name", "The process was closed after 3 wrong attempts");
+                    if (isNameMatch[0].equals("true".toLowerCase())) {
+                        String[] isPhoneMatch = validator(split[1], "^0\\d([\\d]{0,1})([-]{0,1})\\d{7}$", "Invalid number! May contain only digits and '-'. \n for example : 052-1111111 \n Please try again to enter a valid phone", "The process was closed after 3 wrong attempts");
+                        if (isPhoneMatch[0].equals("true".toLowerCase())) {
+                            contacts.add(new Person(split[0], split[1]));
+                        } else {
+                            System.out.println(isPhoneMatch[2]);
+                            System.exit(0);
+                        }
                     } else {
-                        System.out.println(isPhoneMatch[2]);
+                        System.out.println(isNameMatch[2]);
                         System.exit(0);
                     }
-                } else {
-                    System.out.println(isNameMatch[2]);
-                    System.exit(0);
                 }
-            }
             } else {
                 System.out.println("The file has no content");
             }
             reader.close();
         } catch (FileNotFoundException e) {
-            System.err.printf("Cannot find the file specified %s " , fileName + "\n" + e);
+            System.err.printf("Cannot find the file specified %s ", fileName + "\n" + e);
 
         } catch (IOException e) {
             System.err.println("Cannot import the file, please try again \n" + e);
@@ -227,6 +218,7 @@ public class MenuBar {
     /**
      * In this function the whole menu managed after the user entered a number the function go to another function called Validator
      * and check if the number the user entered is valid if it is the function changed the String to int using ParseInt
+     *
      * @return the number the user entered.
      */
     public int menu() {
@@ -267,10 +259,11 @@ public class MenuBar {
 
     /**
      * This function will check if the input is match the regex if not the user has 3 attempts.
-     * @param choice The parameter the user entered and needed to validate with regex.
-     * @param regex The condition.
+     *
+     * @param choice       The parameter the user entered and needed to validate with regex.
+     * @param regex        The condition.
      * @param errorMessage If the user entered a not valid input the function will print an error Msg.
-     * @param exception Msg when the Operation closed.
+     * @param exception    Msg when the Operation closed.
      * @return array of String
      */
     public String[] validator(String choice, String regex, String errorMessage, String exception) {
